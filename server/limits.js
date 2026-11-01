@@ -1,0 +1,9 @@
+export const DEDUPE_WINDOW = 100;
+export const FIRST3_WINDOW = 50;
+export const PROMPT_HISTORY_SIZE = 20;
+export const REPLY_MAX_GRAPHEMES = 200;
+export const REPLY_MAX_EMOJI = 2;
+export const REPLY_MAX_WORDS = 10;
+export const RETENTION_REPLY_CAP = 500;
+export const RETENTION_DAYS = 90;
+export const RETENTION_MS = RETENTION_DAYS * 24 * 60 * 60 * 1000;

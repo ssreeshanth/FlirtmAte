@@ -12,6 +12,9 @@ function devApiPlugin() {
   return {
     name: 'flirtmate-dev-api',
     configureServer(viteServer) {
+      // Vitest starts Vite in serve mode too; its tests use in-memory mock APIs,
+      // so do not load real provider credentials or open the development DB.
+      if (process.env.VITEST || process.env.NODE_ENV === 'test') return;
       const config = loadConfig(process.env);
       if (config.dbPath !== ':memory:') mkdirSync(dirname(config.dbPath), { recursive: true });
       const db = openDatabase(config.dbPath);

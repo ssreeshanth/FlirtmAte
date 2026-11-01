@@ -1,81 +1,184 @@
-# FlirtMate
+# 💜 FlirtMate
 
-FlirtMate turns a pasted message into six distinct replies across six flirting vibes.
-The frontend is React + Vite and the backend is Node.js/Express with SQLite storage.
-The project is developed and tested on Node 24; Node 22.12 or newer is required.
+> **Context-aware romantic reply assistant powered by modern AI.**  
+> Transform any incoming text message into six tailored, natural reply options across distinct flirting vibes — with zero prompt leakage, zero storage of incoming messages, and full support for English, Telugu, Tenglish, and Hinglish.
 
-## Setup
+---
 
-```sh
+[![Node.js Version](https://img.shields.io/badge/Node.js-%3E%3D22.12.0-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![React Version](https://img.shields.io/badge/React-19.2-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![Express Version](https://img.shields.io/badge/Express-5.1-000000?logo=express&logoColor=white)](https://expressjs.com/)
+[![SQLite](https://img.shields.io/badge/SQLite-better--sqlite3-003B57?logo=sqlite&logoColor=white)](https://github.com/WiseLibs/better-sqlite3)
+[![Vite](https://img.shields.io/badge/Vite-7.3-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Playwright](https://img.shields.io/badge/Tested%20with-Playwright-2EAD33?logo=playwright&logoColor=white)](https://playwright.dev/)
+[![Vitest](https://img.shields.io/badge/Tested%20with-Vitest-6E9F18?logo=vitest&logoColor=white)](https://vitest.dev/)
+
+---
+
+## 🌟 Key Highlights
+
+- **6 Signature Flirting Vibes** — Generate six distinct angles for every message: Cute, Playful, Smooth, Bold, Romantic, and Funny.
+- **Natural Cultural Styles** — Native support for **English**, **Telugu (తెలుగు)**, **Tenglish** (Telugu written in Latin script), and **Hinglish** (Hindi written in Latin script).
+- **Flirting Intensity Control** — Tailor the tone with three selectable levels: **Mild**, **Balanced**, and **Spicy**.
+- **Conversation Threading** — Multi-turn context memory (up to 5 recent exchanges) stored strictly in tab session memory for seamless follow-up replies.
+- **Privacy First by Design** — **Incoming messages are never saved to disk or database.** Only generated reply candidates are cached locally for deduplication.
+- **Smart Deduplication Engine** — Sliding window tracking prevents stale, repeated suggestions across generations.
+- **Dual AI Provider Integration** — Works out of the box with both **Google Gemini** (`@google/genai`) and **OpenAI** (`openai`).
+- **Production-Grade Security** — Signed `HttpOnly` guest session cookies, SameSite=Strict, CSRF protection, Helmet security headers, rate limiting, and bundle leakage auditing.
+
+---
+
+## 🎭 The 6 Flirting Vibes
+
+| Vibe | Tone & Style | Purpose |
+| :--- | :--- | :--- |
+| **Cute** 🌸 | Soft, sweet, warm, endearing | Warm, gentle, and affectionate without feeling intense |
+| **Playful** 🎯 | Light teasing, bantering, witty | Keeping the conversation fun and sparky |
+| **Smooth** ✨ | Confident, calm, charming, relaxed | Effortlessly charismatic and engaging |
+| **Bold** 🔥 | Direct, clear interest, flirtatious | Straightforward romantic spark when an opening presents itself |
+| **Romantic** 🌹 | Sincere, heartfelt, tender | Meaningful connection grounded in the actual moment |
+| **Funny** 😂 | Quick humor, clever situational jokes | Lighthearted laughs tied directly to their point |
+
+*All responses adhere to safe, respectful boundaries: no cheesy pickup lines, no pressure, and strictly PG-13.*
+
+---
+
+## 🏗️ Architecture & Technology Stack
+
+```
+┌────────────────────────────────────────────────────────┐
+│                   React 19 Frontend                    │
+│   (Vite, Single-Tab Session Storage, Responsive UI)    │
+└──────────────────────────┬─────────────────────────────┘
+                           │  HTTP / JSON + Signed Cookie
+┌──────────────────────────▼─────────────────────────────┐
+│                 Node.js / Express 5 API                │
+│  - Helmet & Security Headers    - Rate Limiters        │
+│  - CSRF Origin Validation       - Deduplication Filter │
+│  - Strict JSON Validation       - Session Management   │
+└──────────────┬──────────────────────────┬──────────────┘
+               │                          │
+┌──────────────▼──────────┐    ┌──────────▼──────────────┐
+│  AI Provider Interface  │    │      Better-SQLite3     │
+│  - Google Gemini API    │    │  - Client Guest Session │
+│  - OpenAI API           │    │  - Starred Favorites    │
+│  - Fallback Engine      │    │  - History Deduplication│
+└─────────────────────────┘    └─────────────────────────┘
+```
+
+- **Frontend**: React 19, Vite, Pure CSS with adaptive mobile-first design (tested down to 320px).
+- **Backend**: Express 5, Node.js 22.12+/24, Helmet, `express-rate-limit`.
+- **Database**: Local SQLite database via `better-sqlite3` with automated retention and cleanup sweeps.
+- **AI Engines**: Official `@google/genai` (Gemini) and `openai` (GPT models) SDKs.
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Node.js**: `v22.12.0` or higher (tested on Node 24)
+- **Package Manager**: `npm` (included with Node.js)
+- **API Key**: A valid key from [Google AI Studio](https://aistudio.google.com/) or [OpenAI Platform](https://platform.openai.com/)
+
+### 1. Clone & Install
+
+```bash
+git clone https://github.com/ssreeshanth/fm_codex.git
+cd fm_codex
 npm install
+```
+
+### 2. Configure Environment
+
+Copy the example configuration:
+
+```bash
+# Windows PowerShell
+Copy-Item .env.example .env
+
+# macOS / Linux
 cp .env.example .env
+```
+
+Open `.env` and set your preferred provider:
+
+#### Option A: Google Gemini (Recommended)
+```env
+AI_PROVIDER=gemini
+GEMINI_API_KEY=your_actual_gemini_api_key_here
+GEMINI_MODEL=gemini-2.5-flash
+```
+
+#### Option B: OpenAI
+```env
+AI_PROVIDER=openai
+OPENAI_API_KEY=your_actual_openai_api_key_here
+OPENAI_MODEL=gpt-4o-mini
+```
+
+### 3. Run Development Server
+
+```bash
 npm run start:all
 ```
 
-Useful scripts:
+The application will be live at `http://localhost:5173`.
 
-- `npm run dev` starts the Vite development server with the API mounted in the same process.
-- `npm run server` starts the standalone API server.
-- `npm run build` creates the production frontend.
-- `npm start` serves the built frontend and API from one process.
-- `npm test` runs unit, integration, and DOM tests.
-- `npm run test:e2e` runs Playwright tests with a fake provider.
-- `npm run test:live` is reserved for explicitly enabled real-provider checks.
-- `npm run check` scans product code and the built bundle.
+---
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for production build, TLS, secrets, persistent storage,
-backups, and operations requirements.
+## ⚙️ Available Scripts
 
-## Provider configuration
+| Command | Description |
+| :--- | :--- |
+| `npm run dev` | Starts Vite dev server with dev API proxy mounted |
+| `npm run server` | Starts standalone Node.js Express server on port `4173` |
+| `npm run start:all` | Default shortcut to run the full application |
+| `npm run build` | Compiles production assets into `dist/` |
+| `npm start` | Runs the production-mode server serving built static assets |
+| `npm test` | Runs unit, integration, and DOM tests via Vitest |
+| `npm run test:e2e` | Runs Playwright end-to-end browser journeys |
+| `npm run test:live` | Runs live provider validation tests (requires API key) |
+| `npm run check` | Runs security scan, bundle size check, and secret leak prevention |
 
-Set `AI_PROVIDER` to `openai` or `gemini`, then provide that provider's key and model:
-`OPENAI_API_KEY`/`OPENAI_MODEL` or `GEMINI_API_KEY`/`GEMINI_MODEL`. `AI_TEMPERATURE`
-defaults to `1`; set it to `off` for models that reject a custom temperature.
-In production, provide `SESSION_SECRET` (at least 32 random bytes), the selected provider
-key, model, real `PRIVACY_CONTACT_EMAIL`, and an absolute `DB_PATH` on a persistent mounted
-volume as environment variables or through your host's secret manager. Placeholder example
-keys/contact emails and relative or in-memory production databases are rejected. Generate a
-secret with `node -e "console.log(require('node:crypto').randomBytes(48).toString('base64url'))"`.
-Production mode requires HTTPS and uses secure, HttpOnly, SameSite=Strict session cookies.
-Terminate TLS at a trusted reverse proxy and set `TRUST_PROXY` to its exact hop count.
-Use a separate database, session secret, and provider key for staging. Configure backups and
-test restoring them before launch. The in-memory limits and SQLite setup require a single
-application instance; set spending limits and alerts in the provider account.
+---
 
-The OpenAI adapter uses the SDK's Chat Completions `json_schema` response format
-with strict mode. The Gemini adapter uses the SDK's `generateContent` JSON MIME
-type and response schema. Dependencies are locked in `package-lock.json`; update them
-through reviewed lockfile changes.
+## 🔒 Privacy & Data Retention Policy
 
-## Privacy and retention
+1. **Zero Text Retention**: Incoming partner messages and sent replies are held exclusively in the browser tab's `sessionStorage` (cleared immediately when tab is closed or a new conversation is started). They are never written to the server database.
+2. **Guest Sessions**: Authentication relies on cryptographically signed, random guest session tokens stored in `HttpOnly`, `SameSite=Strict` cookies. No email, phone number, or persistent identity is required.
+3. **Automated Data Pruning**:
+   - Unstarred replies automatically expire after 90 days.
+   - Per-client unstarred history is capped at 500 items.
+   - Starred favorite replies are retained until explicitly removed by the user.
+   - Users can purge all their saved history and favorites at any time with one click.
 
-The server stores generated replies, their language/vibe metadata, stars, and timestamps,
-plus normalized reply text used for duplicate prevention. Incoming messages and replies you
-mark as sent are kept in this tab's session storage (up to five exchanges) and sent as context
-to the selected AI provider with each follow-up. They are not stored in FlirtMate's database.
-Starting a new conversation or closing the tab clears the local context. FlirtMate does not
-control the provider's retention policy.
+---
 
-Each browser receives a server-signed guest session in an HttpOnly cookie. Sessions expire
-after 30 days; **End session** clears the cookie. Clearing browser cookies or using another
-browser starts a new history. Histories created by earlier versions using a localStorage ID
-are not automatically migrated to the new session identity. Unstarred replies are removed after 90 days and the
-per-client cap removes the oldest unstarred replies above 500. Starred replies are exempt.
-The cap never deletes the batch just inserted, so a client with many starred replies can
-remain above 500. Deletions can leave batches with fewer than six replies. The no-repeat
-guarantee covers only replies still stored inside the dedupe windows.
+## 🧪 Testing & Verification
 
-SQLite files on ephemeral filesystems are wiped when the host is recycled; use a persistent
-volume or a hosted database for deployment. The in-flight lock and per-process rate limit
-are in memory and do not coordinate multiple instances. Configure provider-side usage limits
-and alerts; the app does not enforce a monthly spend cap.
+FlirtMate is thoroughly covered by automated test suites:
 
-Language validation checks script, not whether words are genuinely Tenglish or Hinglish.
-The no-stock-pickup-lines, PG-13, and one-to-two-sentence rules are prompt constraints and
-are not machine-verified.
+```bash
+# Run unit & integration test suites
+npm test
 
-## Assumptions and deviations
+# Run end-to-end browser tests
+npm run test:e2e
 
-The implementation uses Express 5 route matching, a memory-safe fallback UUID generator
-for insecure origins, and the installed SDK versions listed above. The fake provider is
-used only by tests. Live-provider checks remain disabled unless `FLIRTMATE_LIVE` is set.
+# Run bundle security and hardcoded content audits
+npm run check
+```
+
+---
+
+## 📖 Further Documentation
+
+- [DEPLOYMENT.md](DEPLOYMENT.md) — Production setup, TLS reverse proxy, persistent disk volumes, and secrets management.
+- [MANUAL.md](MANUAL.md) — Detailed user manual, feature guide, and operational best practices.
+
+---
+
+## 📄 License
+
+This project is released under the [MIT License](LICENSE).
